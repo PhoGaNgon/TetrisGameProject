@@ -1,23 +1,40 @@
 package main;
 
 import gamestates.Gamestates;
+import gamestates.Menu;
+import gamestates.Playing;
 
 import java.awt.*;
 
 public class Game implements Runnable {
 
-    private GameWindow gameWindow;
-    private GamePanel gamePanel;
+    public GameWindow gameWindow;
+    public GamePanel gamePanel;
     private Thread gameThread;
     private final int FPS_CAP = 120; // Max number of frames per second
     private final int UPS_CAP = 200; // Max number of updates per second
 
+    private Menu menu;
+    private Playing playing;
+
     public Game() {
         gamePanel = new GamePanel(this);
+        initClasses();
+        gamePanel.setFocusable(true);
+        gamePanel.requestFocus();
         gameWindow = new GameWindow();
         gameWindow.add(gamePanel);
+        startGameThread();
+    }
+
+    private void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
+    }
+
+    private void initClasses() {
+        menu = new Menu(this);
+        playing = new Playing();
     }
 
     public void update() {
@@ -26,8 +43,8 @@ public class Game implements Runnable {
 
     public void render(Graphics g) {
         switch (Gamestates.gamestate) {
-            case MENU -> g.fillRect(100, 100, 20, 20);
-            case PLAYING -> g.fillRect(200, 200, 30, 30);
+            case MENU -> menu.render(g);
+            case PLAYING -> playing.render(g);
         }
     }
 
