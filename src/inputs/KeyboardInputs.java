@@ -17,7 +17,6 @@ public class KeyboardInputs implements KeyListener {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_ESCAPE:
                 Gamestates.gamestate = Gamestates.MENU;
-                System.out.println("MENU");
         }
 
     }
