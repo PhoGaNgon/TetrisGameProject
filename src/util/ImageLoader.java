@@ -8,6 +8,7 @@ import java.io.InputStream;
 public class ImageLoader {
 
     public static final String MENU_BACKGROUND = "menu_background.png";
+    public static final String MENU_BUTTON = "menu_button.png";
 
     public static BufferedImage GetImage(String fileName) {
         BufferedImage img = null;

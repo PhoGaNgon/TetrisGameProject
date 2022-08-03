@@ -2,6 +2,7 @@ package main;
 
 import gamestates.Gamestates;
 import gamestates.Menu;
+import gamestates.Options;
 import gamestates.Playing;
 
 import java.awt.*;
@@ -16,12 +17,13 @@ public class Game implements Runnable {
 
     private Menu menu;
     private Playing playing;
+    private Options options;
 
     public Game() {
         gamePanel = new GamePanel(this);
         initClasses();
         gamePanel.setFocusable(true);
-        gamePanel.requestFocus();
+        gamePanel.requestFocusInWindow();
         gameWindow = new GameWindow();
         gameWindow.add(gamePanel);
         startGameThread();
@@ -35,16 +37,22 @@ public class Game implements Runnable {
     private void initClasses() {
         menu = new Menu(this);
         playing = new Playing();
+        options = new Options();
     }
 
     public void update() {
-
+        switch (Gamestates.gamestate) {
+            case MENU -> menu.update();
+            case PLAYING -> playing.update();
+            case OPTIONS -> options.update();
+        }
     }
 
     public void render(Graphics g) {
         switch (Gamestates.gamestate) {
             case MENU -> menu.render(g);
             case PLAYING -> playing.render(g);
+            case OPTIONS -> options.render(g);
         }
     }
 
@@ -78,6 +86,7 @@ public class Game implements Runnable {
             if (deltaUPS >= 1) {
                 deltaUPS--;
                 upsCount++;
+                update();
             }
 
             if (currentCountCheck - lastCountCheck >= 1000) {
@@ -86,8 +95,11 @@ public class Game implements Runnable {
                 fpsCount = 0;
                 upsCount = 0;
             }
-
         }
+    }
+
+    public Menu getMenu() {
+        return menu;
     }
 
 }

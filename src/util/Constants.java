@@ -12,7 +12,10 @@ public class Constants {
     }
 
     public static class MenuConstants {
-
+        public static final int BUTTON_WIDTH_DEFAULT = 96;
+        public static final int BUTTON_HEIGHT_DEFAULT = 32;
+        public static final int BUTTON_WIDTH = (int) (BUTTON_WIDTH_DEFAULT * GAME_SCALE);
+        public static final int BUTTON_HEIGHT = (int) (BUTTON_HEIGHT_DEFAULT * GAME_SCALE);
     }
 
 }
