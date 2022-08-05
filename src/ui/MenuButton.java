@@ -1,4 +1,4 @@
-package ui.menu;
+package ui;
 
 import gamestates.Gamestates;
 import util.ImageLoader;

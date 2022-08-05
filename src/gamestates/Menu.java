@@ -3,12 +3,10 @@ package gamestates;
 import main.Game;
 
 import static util.Constants.GAME_SCALE;
-import static util.Constants.MenuConstants.*;
 
-import ui.menu.MenuButton;
+import ui.MenuButton;
 import util.ImageLoader;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
