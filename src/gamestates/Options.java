@@ -16,7 +16,7 @@ public class Options implements GamestateMethods{
     }
 
     @Override
-    public void render(Graphics g) {
+    public void draw(Graphics g) {
         g.setColor(Color.CYAN);
         g.fillRect(0, 0, GAME_SIZE_WIDTH, GAME_SIZE_HEIGHT);
     }

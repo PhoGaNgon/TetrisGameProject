@@ -3,12 +3,10 @@ package gamestates;
 import main.Game;
 
 import static util.Constants.GAME_SCALE;
-import static util.Constants.MenuConstants.*;
 
-import ui.menu.MenuButton;
+import ui.MenuButton;
 import util.ImageLoader;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -46,12 +44,12 @@ public class Menu implements GamestateMethods {
             b.update();
     }
 
-    public void render(Graphics g) {
+    public void draw(Graphics g) {
         g.fillRect(0, 0, GAME_SIZE_WIDTH, GAME_SIZE_HEIGHT);
         g.drawImage(menuBackground, GAME_SIZE_WIDTH / 2 - (backgroundWidth / 2), (int) (30 * GAME_SCALE), backgroundWidth, backgroundHeight, null);
 
         for (MenuButton b : buttons)
-            b.render(g);
+            b.draw(g);
     }
 
     public void mouseMoved(MouseEvent e) {

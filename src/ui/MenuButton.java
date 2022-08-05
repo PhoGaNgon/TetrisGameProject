@@ -1,4 +1,4 @@
-package ui.menu;
+package ui;
 
 import gamestates.Gamestates;
 import util.ImageLoader;
@@ -44,7 +44,7 @@ public class MenuButton {
             bIndex = 2;
     }
 
-    public void render(Graphics g) {
+    public void draw(Graphics g) {
         g.drawImage(imgs[bIndex], bounds.x, bounds.y, BUTTON_WIDTH, BUTTON_HEIGHT, null);
     }
 
