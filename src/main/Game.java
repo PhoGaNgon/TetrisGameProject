@@ -101,4 +101,8 @@ public class Game implements Runnable {
         return menu;
     }
 
+    public Playing getPlaying() {
+        return playing;
+    }
+
 }

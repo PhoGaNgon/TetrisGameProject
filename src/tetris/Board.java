@@ -28,30 +28,33 @@ public class Board extends Rectangle {
 
     public void drawGrid(Graphics g) {
         g.setColor(Color.DARK_GRAY);
-        for (int i = 1; i < NUM_TILES_HEIGHT; i++) {
+        for (int i = 0; i <= NUM_TILES_HEIGHT; i++) {
             // Draw row lines
-            int y1 = (int) (y + i * TILES_SIZE);
+            int y1 = (int) (y + i * TILE_SIZE);
             g.drawLine(x, y1, x + BOARD_WIDTH, y1);
 
-            for (int j = 1; j < NUM_TILES_WIDTH; j++) {
+            for (int j = 0; j <= NUM_TILES_WIDTH; j++) {
                 // Draw column lines
-                int x1 = (int) (x + j * TILES_SIZE);
+                int x1 = (int) (x + j * TILE_SIZE);
                 g.drawLine(x1, y, x1, y + BOARD_HEIGHT);
             }
         }
     }
 
     public void drawBoardContents(Graphics g) {
-        g.setColor(Color.PINK);
         for (int i = 0; i < boardContents.length; i++) {
             for (int j = 0; j < boardContents[i].length; j++) {
-                if (boardContents[i][j] == 0) {
-                    int x1 = (int) (x + j * TILES_SIZE) + 1;
-                    int y1 = (int) (y + i * TILES_SIZE) + 1;
-                    g.fillRect(x1, y1, (int) TILES_SIZE, (int) TILES_SIZE);
+                if (boardContents[i][j] == 1) {
+                    g.setColor(Color.PINK);
+                    int x1 = (int) (x + j * TILE_SIZE) + 1;
+                    int y1 = (int) (y + i * TILE_SIZE) + 1;
+                    g.fillRect(x1, y1, (int) TILE_SIZE - 1, (int) TILE_SIZE - 1);
                 }
             }
         }
+    }
+
+    public void update() {
     }
 
     public void draw(Graphics g) {
@@ -59,6 +62,10 @@ public class Board extends Rectangle {
 //        g.fillRect(x, y, width, height);
         drawBoardContents(g);
         drawGrid(g);
+    }
+
+    public int[][] getBoardContents() {
+        return boardContents;
     }
 
 }
