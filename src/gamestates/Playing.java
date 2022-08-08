@@ -1,7 +1,7 @@
 package gamestates;
 
 import tetris.Board;
-import tetris.Piece;
+import tetris.PieceController;
 import util.ImageLoader;
 
 import java.awt.*;
@@ -18,14 +18,14 @@ public class Playing implements GamestateMethods {
     private int borderX, borderY;
 
     private Board board;
-    private Piece piece;
+    private PieceController pieceController;
 
     public Playing() {
         System.out.println("Playing created");
         background = ImageLoader.GetImage(ImageLoader.PLAYING_BACKGROUND);
         loadBoardBorder();
         board = new Board((int) (borderX + 6 * GAME_SCALE), (int) (borderY + 8 * GAME_SCALE));
-        piece = new Piece(board, 1);
+        pieceController = new PieceController(board);
     }
 
     private void loadBoardBorder() {
@@ -37,17 +37,14 @@ public class Playing implements GamestateMethods {
     public void update() {
         board.update();
 
-        if (piece.isActive())
-            piece.update();
-        else
-            piece = new Piece(board, 1);
+        pieceController.update();
     }
 
     public void draw(Graphics g) {
         g.drawImage(background, 0, 0, GAME_SIZE_WIDTH, GAME_SIZE_HEIGHT, null);
         g.drawImage(boardBorder, borderX, borderY, BOARD_BORDER_WIDTH, BOARD_BORDER_HEIGHT, null);
         board.draw(g);
-        piece.draw(g);
+        pieceController.draw(g);
         //g.setColor(Color.lightGray);
         //g.fillRect(fieldBounds.x, fieldBounds.y, fieldBounds.width, fieldBounds.height);
     }
@@ -55,9 +52,9 @@ public class Playing implements GamestateMethods {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_ESCAPE -> Gamestates.gamestate = Gamestates.MENU;
-            case KeyEvent.VK_RIGHT -> piece.move(1);
-            case KeyEvent.VK_LEFT -> piece.move(-1);
-            case KeyEvent.VK_DOWN -> piece.moveDown();
+            case KeyEvent.VK_RIGHT -> pieceController.moveRight();
+            case KeyEvent.VK_LEFT -> pieceController.moveLeft();
+            case KeyEvent.VK_DOWN -> pieceController.moveDown();
         }
     }
 
