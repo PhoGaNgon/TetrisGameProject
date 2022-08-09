@@ -36,7 +36,6 @@ public class Playing implements GamestateMethods {
 
     public void update() {
         board.update();
-
         pieceController.update();
     }
 
@@ -55,6 +54,8 @@ public class Playing implements GamestateMethods {
             case KeyEvent.VK_RIGHT -> pieceController.moveRight();
             case KeyEvent.VK_LEFT -> pieceController.moveLeft();
             case KeyEvent.VK_DOWN -> pieceController.moveDown();
+            case KeyEvent.VK_UP -> pieceController.rotateClockwise();
+            case KeyEvent.VK_Z -> pieceController.rotateCounterClockwise();
         }
     }
 
