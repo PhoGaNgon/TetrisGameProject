@@ -64,7 +64,10 @@ public class Board extends Rectangle {
                 }
             }
             if (clearCondition) {
-                Arrays.fill(boardContents[i], 0);
+                for (int j = i; j > 0; j--) {
+                    boardContents[j] = boardContents[j - 1];
+                }
+                Arrays.fill(boardContents[0], 0);
             }
         }
     }
