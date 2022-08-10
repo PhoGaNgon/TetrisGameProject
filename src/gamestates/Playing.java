@@ -1,7 +1,7 @@
 package gamestates;
 
 import tetris.Board;
-import tetris.PieceController;
+import tetris.Piece;
 import util.ImageLoader;
 
 import java.awt.*;
@@ -18,14 +18,14 @@ public class Playing implements GamestateMethods {
     private int borderX, borderY;
 
     private Board board;
-    private PieceController pieceController;
+    private Piece piece;
 
     public Playing() {
         System.out.println("Playing created");
         background = ImageLoader.GetImage(ImageLoader.PLAYING_BACKGROUND);
         loadBoardBorder();
         board = new Board((int) (borderX + 6 * GAME_SCALE), (int) (borderY + 8 * GAME_SCALE));
-        pieceController = new PieceController(board);
+        piece = new Piece(board, 6);
     }
 
     private void loadBoardBorder() {
@@ -36,14 +36,14 @@ public class Playing implements GamestateMethods {
 
     public void update() {
         board.update();
-        pieceController.update();
+        //piece.update();
     }
 
     public void draw(Graphics g) {
         g.drawImage(background, 0, 0, GAME_SIZE_WIDTH, GAME_SIZE_HEIGHT, null);
         g.drawImage(boardBorder, borderX, borderY, BOARD_BORDER_WIDTH, BOARD_BORDER_HEIGHT, null);
         board.draw(g);
-        pieceController.draw(g);
+        piece.draw(g);
         //g.setColor(Color.lightGray);
         //g.fillRect(fieldBounds.x, fieldBounds.y, fieldBounds.width, fieldBounds.height);
     }
@@ -51,11 +51,12 @@ public class Playing implements GamestateMethods {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_ESCAPE -> Gamestates.gamestate = Gamestates.MENU;
-            case KeyEvent.VK_RIGHT -> pieceController.moveRight();
-            case KeyEvent.VK_LEFT -> pieceController.moveLeft();
-            case KeyEvent.VK_DOWN -> pieceController.moveDown();
-            case KeyEvent.VK_UP -> pieceController.rotateClockwise();
-            case KeyEvent.VK_Z -> pieceController.rotateCounterClockwise();
+            case KeyEvent.VK_RIGHT -> piece.moveRight();
+            case KeyEvent.VK_LEFT -> piece.moveLeft();
+            case KeyEvent.VK_DOWN -> piece.moveDown();
+            case KeyEvent.VK_UP -> piece.moveUp();
+            case KeyEvent.VK_Z -> piece.rotateRight();
+            case KeyEvent.VK_X -> piece.rotateLeft();
         }
     }
 
