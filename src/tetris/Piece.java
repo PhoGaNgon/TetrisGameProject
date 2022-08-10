@@ -1,6 +1,7 @@
 package tetris;
 
 import java.awt.*;
+import java.util.Arrays;
 
 import static util.Constants.BoardConstants.*;
 import static util.Constants.TetrominoConstants.*;
@@ -11,6 +12,7 @@ public class Piece {
     private Point pos = new Point(3, 0);
     private int[][][] formations;
     private int[][] piece = new int[4][2];
+    private int[][] ghostPiece = new int[4][2];
     private int curRotation = 0;
     private int pieceType;
 
@@ -18,15 +20,33 @@ public class Piece {
         this.board = board;
         this.pieceType = pieceType;
         formations = GetFormations(pieceType);
-        updatePiecePos();
+        updatePieces();
     }
 
-    // Updates the position of each piece component relative to the board
-    protected void updatePiecePos() {
+    // Updates both the playing and ghost piece
+    private void updatePieces() {
+        updatePiece(piece, pos);
+        updateGhost();
+    }
+
+    // Updates the position of the components of the provided piece relative to the given pos
+    protected void updatePiece(int[][] piece, Point pos) {
         for (int i = 0; i < piece.length; i++) {
             piece[i][0] = pos.x + this.formations[curRotation][i][0];
             piece[i][1] = pos.y + this.formations[curRotation][i][1];
         }
+    }
+
+    // Updates the position of the ghost piece to be at the lowest possible position of the board
+    private void updateGhost() {
+        Point ghostPos = new Point(pos.x, pos.y);
+        updatePiece(ghostPiece, ghostPos);
+
+        while (canMoveHere(ghostPiece, ghostPos.x, ghostPos.y + 1)) {
+            ghostPos.y++;
+        }
+
+        updatePiece(ghostPiece, ghostPos);
     }
 
     // Checks if the piece can be moved to x, y
@@ -60,6 +80,7 @@ public class Piece {
         }
     }
 
+    // Rotates the playing piece by dir. -1 for CCW and 1 for CW.
     private void rotate(int dir) {
         int newRotation = curRotation + dir;
 
@@ -74,18 +95,23 @@ public class Piece {
             pos.x = rotationCheck.x;
             pos.y = rotationCheck.y;
             curRotation = newRotation;
-            updatePiecePos();
+            updatePieces();
         }
     }
 
+    // Rotates the playing piece clockwise.
     public void rotateRight() {
         rotate(1);
     }
 
+    // Rotates the playing piece counter-clockwise.
     public void rotateLeft() {
         rotate(-1);
     }
 
+    /* Checks if the provided rotation is possible by using the wall-kick data.
+        Returns the first possible Point that allows the rotation to be valid.
+     */
     protected Point checkValidRotation(int newRotation, int dir) {
         int[][][] wallKickData = GetWallKickData(pieceType);
         int[][] rotatedPiece = new int[4][2];
@@ -124,7 +150,7 @@ public class Piece {
         if (canMoveHere(this.piece, x, y)) {
             pos.x = x;
             pos.y = y;
-            updatePiecePos();
+            updatePieces();
         } else {
             System.out.println("ERROR: Cannot move piece to " + x + ", " + y);
         }
@@ -150,7 +176,7 @@ public class Piece {
         move(pos.x, pos.y - 1);
     }
 
-    public void draw(Graphics g) {
+    private void drawPlayingPiece(Graphics g) {
         for (int[] p : piece) {
             int xTile = (int) (board.getX() + (p[0] * TILE_SIZE) + 1);
             int yTile = (int) (board.getY() + (p[1] * TILE_SIZE) + 1);
@@ -158,6 +184,21 @@ public class Piece {
             g.setColor(new Color(66, 188, 245));
             g.fillRect(xTile, yTile, PIECE_TILE_SIZE, PIECE_TILE_SIZE);
         }
+    }
+
+    private void drawGhost(Graphics g) {
+        for (int[] p : ghostPiece) {
+            int xTile = (int) (board.getX() + (p[0] * TILE_SIZE) + 1);
+            int yTile = (int) (board.getY() + (p[1] * TILE_SIZE) + 1);
+
+            g.setColor(new Color(100, 100, 100));
+            g.fillRect(xTile, yTile, PIECE_TILE_SIZE, PIECE_TILE_SIZE);
+        }
+    }
+
+    public void draw(Graphics g) {
+        drawGhost(g);
+        drawPlayingPiece(g);
     }
 
     public boolean canMoveDown() {
