@@ -14,20 +14,23 @@ import static util.Constants.GAME_SCALE;
 
 public class Playing implements GamestateMethods {
 
-    private BufferedImage background, boardBorder;
+    private final BufferedImage background = ImageLoader.GetImage(ImageLoader.PLAYING_BACKGROUND);
+    private BufferedImage boardBorder;
     private int borderX, borderY;
 
-    private Board board;
+    private int fallTick = 0, fallSpeed = 200;
+    private int lockTick = 0, lockSpeed = 150;
+
+    private final Board board;
     private Piece piece;
 
     public Playing() {
-        System.out.println("Playing created");
-        background = ImageLoader.GetImage(ImageLoader.PLAYING_BACKGROUND);
         loadBoardBorder();
         board = new Board((int) (borderX + 6 * GAME_SCALE), (int) (borderY + 8 * GAME_SCALE));
-        piece = new Piece(board, 6);
+        piece = new Piece(board, 1);
     }
 
+    // Loads the border image for the board
     private void loadBoardBorder() {
         boardBorder = ImageLoader.GetImage(ImageLoader.PLAYING_FIELD_OUTLINE);
         borderX = GAME_SIZE_WIDTH / 2 - BOARD_BORDER_WIDTH / 2;
@@ -36,7 +39,28 @@ public class Playing implements GamestateMethods {
 
     public void update() {
         board.update();
-        //piece.update();
+        fallPiece();
+    }
+
+    // Pushes the piece down over time and locks it if it cannot be lowered for some time.
+    private void fallPiece() {
+        if (piece.canMoveDown()) {
+            fallTick++;
+
+            if (fallTick >= fallSpeed) {
+                fallTick = 0;
+                piece.moveDown();
+            }
+        } else {
+            lockTick++;
+            fallTick = 0;
+
+            if (lockTick >= lockSpeed) {
+                lockTick = 0;
+                piece.lock();
+                piece = new Piece(board, 1);
+            }
+        }
     }
 
     public void draw(Graphics g) {

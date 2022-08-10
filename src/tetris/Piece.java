@@ -7,12 +7,12 @@ import static util.Constants.TetrominoConstants.*;
 
 public class Piece {
 
-    Board board;
-    Point pos = new Point(3, -2);
-    int[][][] formations;
-    int[][] piece = new int[4][2];
-    int curRotation = 0;
-    int pieceType;
+    private Board board;
+    private Point pos = new Point(3, 0);
+    private int[][][] formations;
+    private int[][] piece = new int[4][2];
+    private int curRotation = 0;
+    private int pieceType;
 
     public Piece(Board board, int pieceType) {
         this.board = board;
@@ -30,7 +30,7 @@ public class Piece {
     }
 
     // Checks if the piece can be moved to x, y
-    private boolean canMoveHere(int[][] piece, int x, int y) {
+    public boolean canMoveHere(int[][] piece, int x, int y) {
         int dX = x - pos.x;
         int dY = y - pos.y;
         for (int[] p : piece) {
@@ -46,9 +46,18 @@ public class Piece {
         if (x >= 0 && x < NUM_COLS && y < NUM_ROWS) {
             if (y >= 0) {
                 return board.getBoardContents()[y][x] == 0;
+            } else {
+                return true;
             }
         }
         return false;
+    }
+
+    // Locks the piece onto the board and creates a new one
+    public void lock() {
+        for (int[] p : piece) {
+            board.getBoardContents()[p[1]][p[0]] = pieceType;
+        }
     }
 
     private void rotate(int dir) {
@@ -116,7 +125,6 @@ public class Piece {
             pos.x = x;
             pos.y = y;
             updatePiecePos();
-            System.out.println(pos.x + " " + pos.y);
         } else {
             System.out.println("ERROR: Cannot move piece to " + x + ", " + y);
         }
@@ -147,9 +155,13 @@ public class Piece {
             int xTile = (int) (board.getX() + (p[0] * TILE_SIZE) + 1);
             int yTile = (int) (board.getY() + (p[1] * TILE_SIZE) + 1);
 
-            //g.setColor(new Color(66, 188, 245));
+            g.setColor(new Color(66, 188, 245));
             g.fillRect(xTile, yTile, PIECE_TILE_SIZE, PIECE_TILE_SIZE);
         }
+    }
+
+    public boolean canMoveDown() {
+        return canMoveHere(piece, pos.x, pos.y + 1);
     }
 
 }
