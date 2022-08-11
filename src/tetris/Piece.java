@@ -1,7 +1,6 @@
 package tetris;
 
 import java.awt.*;
-import java.util.Arrays;
 
 import static util.Constants.BoardConstants.*;
 import static util.Constants.TetrominoConstants.*;
@@ -9,7 +8,7 @@ import static util.Constants.TetrominoConstants.*;
 public class Piece {
 
     private Board board;
-    private Point pos = new Point(3, 0);
+    private Point pos = new Point(3, -2);
     private int[][][] formations;
     private int[][] piece = new int[4][2];
     private int[][] ghostPiece = new int[4][2];

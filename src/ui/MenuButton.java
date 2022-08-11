@@ -8,15 +8,16 @@ import java.awt.image.BufferedImage;
 
 import static util.Constants.MenuConstants.*;
 
-public class MenuButton {
+public class MenuButton extends CustomButton {
 
     private Rectangle bounds;
-    private BufferedImage imgs[];
+    private BufferedImage[] imgs;
     private boolean mouseOver, mousePressed;
     private Gamestates state;
     private int bIndex; // For which state of the button to display
 
     public MenuButton(int x, int y, int rowIndex, Gamestates state) {
+        super(x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
         bounds = new Rectangle(x - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT);
         this.state = state;
         loadImgs(rowIndex);
@@ -49,9 +50,9 @@ public class MenuButton {
     }
 
     public void applyGamestate() {
+        Gamestates.gamestate = state;
         if (state == Gamestates.QUIT)
             System.exit(0);
-        Gamestates.gamestate = state;
     }
 
     public void setMouseOver(boolean mouseOver) {

@@ -26,15 +26,15 @@ public class Playing implements GamestateMethods {
 
     public Playing() {
         loadBoardBorder();
-        board = new Board((int) (borderX + 6 * GAME_SCALE), (int) (borderY + 8 * GAME_SCALE));
+        board = new Board(borderX + BOARD_OFFSET_FROM_BORDER_X, borderY + BOARD_OFFSET_FROM_BORDER_Y);
         piece = new Piece(board, 1);
     }
 
     // Loads the border image for the board
     private void loadBoardBorder() {
         boardBorder = ImageLoader.GetImage(ImageLoader.PLAYING_FIELD_OUTLINE);
-        borderX = GAME_SIZE_WIDTH / 2 - BOARD_BORDER_WIDTH / 2;
-        borderY = (int) (50 * GAME_SCALE);
+        borderX = GAME_SIZE_WIDTH / 2 - boardBorder.getWidth() / 2;
+        borderY = (int) (125 * GAME_SCALE);
     }
 
     public void update() {
@@ -65,7 +65,7 @@ public class Playing implements GamestateMethods {
 
     public void draw(Graphics g) {
         g.drawImage(background, 0, 0, GAME_SIZE_WIDTH, GAME_SIZE_HEIGHT, null);
-        g.drawImage(boardBorder, borderX, borderY, BOARD_BORDER_WIDTH, BOARD_BORDER_HEIGHT, null);
+        g.drawImage(boardBorder, borderX, borderY, boardBorder.getWidth(), boardBorder.getHeight(), null);
         board.draw(g);
         piece.draw(g);
         //g.setColor(Color.lightGray);

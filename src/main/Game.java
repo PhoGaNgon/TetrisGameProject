@@ -69,7 +69,6 @@ public class Game implements Runnable {
         double lastCountCheck = currentCountCheck;
 
         while (true) {
-
             currentCountCheck = System.currentTimeMillis();
             currentTime = System.nanoTime();
             deltaFPS += (currentTime - previousTime) / timeBetweenFrames;
