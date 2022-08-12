@@ -1,5 +1,7 @@
 package tetris;
 
+import gamestates.Playing;
+
 import java.awt.*;
 
 import static util.Constants.BoardConstants.*;
@@ -8,15 +10,17 @@ import static util.Constants.TetrominoConstants.*;
 public class Piece {
 
     private Board board;
-    private Point pos = new Point(3, -2);
+    private Playing playing;
+    private Point pos = new Point(3, 3);
     private int[][][] formations;
     private int[][] piece = new int[4][2];
     private int[][] ghostPiece = new int[4][2];
     private int curRotation = 0;
     private int pieceType;
 
-    public Piece(Board board, int pieceType) {
+    public Piece(Board board, Playing playing, int pieceType) {
         this.board = board;
+        this.playing = playing;
         this.pieceType = pieceType;
         formations = GetFormations(pieceType);
         updatePieces();
@@ -24,28 +28,28 @@ public class Piece {
 
     // Updates both the playing and ghost piece
     private void updatePieces() {
-        updatePiece(piece, pos);
+        updatePiece(piece, pos, curRotation);
         updateGhost();
     }
 
-    // Updates the position of the components of the provided piece relative to the given pos
-    protected void updatePiece(int[][] piece, Point pos) {
+    // Repositions the piece components (minos) relative to pos and at the provided rotation
+    protected void updatePiece(int[][] piece, Point pos, int rotValue) {
         for (int i = 0; i < piece.length; i++) {
-            piece[i][0] = pos.x + this.formations[curRotation][i][0];
-            piece[i][1] = pos.y + this.formations[curRotation][i][1];
+            piece[i][0] = pos.x + this.formations[rotValue][i][0];
+            piece[i][1] = pos.y + this.formations[rotValue][i][1];
         }
     }
 
     // Updates the position of the ghost piece to be at the lowest possible position of the board
     private void updateGhost() {
         Point ghostPos = new Point(pos.x, pos.y);
-        updatePiece(ghostPiece, ghostPos);
+        updatePiece(ghostPiece, ghostPos, curRotation);
 
         while (canMoveHere(ghostPiece, ghostPos.x, ghostPos.y + 1)) {
             ghostPos.y++;
         }
 
-        updatePiece(ghostPiece, ghostPos);
+        updatePiece(ghostPiece, ghostPos, curRotation);
     }
 
     // Checks if the piece can be moved to x, y
@@ -74,7 +78,7 @@ public class Piece {
 
     // Locks the piece onto the board and creates a new one
     public void lock() {
-        for (int[] p : piece) {
+        for (int[] p : ghostPiece) {
             board.getBoardContents()[p[1]][p[0]] = pieceType;
         }
     }
@@ -95,6 +99,7 @@ public class Piece {
             pos.y = rotationCheck.y;
             curRotation = newRotation;
             updatePieces();
+            playing.resetLockDelayTick();
         }
     }
 
@@ -115,10 +120,7 @@ public class Piece {
         int[][][] wallKickData = GetWallKickData(pieceType);
         int[][] rotatedPiece = new int[4][2];
 
-        for (int i = 0; i < rotatedPiece.length; i++) {
-            rotatedPiece[i][0] = pos.x + formations[newRotation][i][0];
-            rotatedPiece[i][1] = pos.y + formations[newRotation][i][1];
-        }
+        updatePiece(rotatedPiece, pos, newRotation);
 
         if (wallKickData != null) {
             int rotationState = curRotation * 2;
@@ -140,7 +142,7 @@ public class Piece {
             }
         }
 
-        System.out.println("Failed");
+        System.out.println("Failed to rotate");
         return null;
     }
 
@@ -150,6 +152,7 @@ public class Piece {
             pos.x = x;
             pos.y = y;
             updatePieces();
+            playing.resetLockDelayTick();
         } else {
             System.out.println("ERROR: Cannot move piece to " + x + ", " + y);
         }
@@ -200,8 +203,14 @@ public class Piece {
         drawPlayingPiece(g);
     }
 
+    // Returns whether the piece can move down by a tile
     public boolean canMoveDown() {
         return canMoveHere(piece, pos.x, pos.y + 1);
+    }
+
+    // Returns if the spawn spot for the piece is avaible, signaling that the game is still on-going
+    public boolean isValidSpawn() {
+        return canMoveHere(piece, pos.x, pos.y);
     }
 
 }

@@ -18,8 +18,9 @@ public class Playing implements GamestateMethods {
     private BufferedImage boardBorder;
     private int borderX, borderY;
 
-    private int fallTick = 0, fallSpeed = 200;
-    private int lockTick = 0, lockSpeed = 150;
+    private int fallTick = 0, fallSpeed = 120;
+    private int lockTick = 0, lockDelay = 60, extLockTick = 0, extLockDelay = 180;
+    private boolean gameOver = false;
 
     private final Board board;
     private Piece piece;
@@ -27,7 +28,7 @@ public class Playing implements GamestateMethods {
     public Playing() {
         loadBoardBorder();
         board = new Board(borderX + BOARD_OFFSET_FROM_BORDER_X, borderY + BOARD_OFFSET_FROM_BORDER_Y);
-        piece = new Piece(board, 1);
+        piece = new Piece(board, this, 1);
     }
 
     // Loads the border image for the board
@@ -53,13 +54,24 @@ public class Playing implements GamestateMethods {
             }
         } else {
             lockTick++;
+            extLockTick++;
             fallTick = 0;
 
-            if (lockTick >= lockSpeed) {
-                lockTick = 0;
-                piece.lock();
-                piece = new Piece(board, 1);
+            if (lockTick >= lockDelay || extLockTick >= extLockDelay) {
+                placePiece();
             }
+        }
+    }
+
+    // Places/locks the current piece to the lowest possible position
+    private void placePiece() {
+        piece.lock();
+        piece = new Piece(board, this, 1);
+        fallTick = 0;
+        lockTick = 0;
+        extLockTick = 0;
+        if (!piece.isValidSpawn()) {
+            setGameOver();
         }
     }
 
@@ -78,13 +90,21 @@ public class Playing implements GamestateMethods {
             case KeyEvent.VK_RIGHT -> piece.moveRight();
             case KeyEvent.VK_LEFT -> piece.moveLeft();
             case KeyEvent.VK_DOWN -> piece.moveDown();
-            case KeyEvent.VK_UP -> piece.moveUp();
+            case KeyEvent.VK_UP -> piece.rotateLeft();
             case KeyEvent.VK_Z -> piece.rotateRight();
-            case KeyEvent.VK_X -> piece.rotateLeft();
+            case KeyEvent.VK_SPACE -> placePiece();
         }
     }
 
     public void keyReleased(KeyEvent e) {
+    }
+
+    public void resetLockDelayTick() {
+        lockTick = 0;
+    }
+
+    public void setGameOver() {
+        System.out.println("Game Over!");
     }
 
 }

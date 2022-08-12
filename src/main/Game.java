@@ -12,8 +12,8 @@ public class Game implements Runnable {
     public GameWindow gameWindow;
     public GamePanel gamePanel;
     private Thread gameThread;
-    private final int FPS_CAP = 120; // Max number of frames per second
-    private final int UPS_CAP = 200; // Max number of updates per second
+    private final int FPS_CAP = 100; // Max number of frames per second
+    private final int UPS_CAP = 120; // Max number of updates per second
 
     private Menu menu;
     private Playing playing;
