@@ -6,15 +6,16 @@ import java.util.Arrays;
 import static util.Constants.BoardConstants.*;
 import static util.Constants.TetrominoConstants.*;
 
-public class Board extends Rectangle {
+public class Board {
 
     private int x, y;
+    private int gridY; // The actual y-value for the grid itself
     private int[][] boardContents;
 
     public Board(int x, int y) {
-        super(x, y, BOARD_WIDTH, BOARD_HEIGHT);
         this.x = x;
-        this.y = y;
+        this.gridY = y;
+        this.y = (int) (y - 4 * TILE_SIZE);
         initBoardContents();
     }
 
@@ -51,15 +52,15 @@ public class Board extends Rectangle {
 
     public void drawGrid(Graphics g) {
         g.setColor(Color.DARK_GRAY);
-        for (int i = 0; i <= NUM_ROWS; i++) {
+        for (int i = 0; i <= NUM_VISIBLE_ROWS; i++) {
             // Draw row lines
-            int y1 = (int) (y + i * TILE_SIZE);
+            int y1 = (int) (gridY + i * TILE_SIZE);
             g.drawLine(x, y1, x + BOARD_WIDTH, y1);
 
             for (int j = 0; j <= NUM_COLS; j++) {
                 // Draw column lines
                 int x1 = (int) (x + j * TILE_SIZE);
-                g.drawLine(x1, y, x1, y + BOARD_HEIGHT);
+                g.drawLine(x1, gridY, x1, gridY + BOARD_HEIGHT);
             }
         }
     }
@@ -77,24 +78,27 @@ public class Board extends Rectangle {
         }
     }
 
-    public void clearLine() {
-        for (int i = 0; i < boardContents.length; i++) {
+    // Clears all filled rows in the board and returns how many were cleared.
+    public int clearRows() {
+        int rowsCleared = 0;
+
+        for (int rowIndex = 0; rowIndex < boardContents.length; rowIndex++) {
             boolean clearCondition = true;
-            for (int j = 0; j < boardContents[i].length; j++) {
-                if (boardContents[i][j] == 0) {
+            for (int colIndex = 0; colIndex < boardContents[rowIndex].length; colIndex++) {
+                if (boardContents[rowIndex][colIndex] == 0) {
                     clearCondition = false;
                 }
             }
             if (clearCondition) {
-                for (int j = i; j > 0; j--) {
-                    boardContents[j] = boardContents[j - 1];
+                for (int j = rowIndex; j > 0; j--) { // Shift all above rows downwards
+                    boardContents[j] = Arrays.copyOf(boardContents[j - 1], boardContents[j - 1].length);
                 }
                 Arrays.fill(boardContents[0], 0);
+                rowsCleared++;
             }
         }
-    }
 
-    public void update() {
+        return rowsCleared;
     }
 
     public void draw(Graphics g) {
@@ -106,4 +110,19 @@ public class Board extends Rectangle {
         return boardContents;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
 }

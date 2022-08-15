@@ -3,6 +3,8 @@ package util;
 public class Constants {
 
     public static final float GAME_SCALE = 1f; // Scale of game
+    public static final int FPS_CAP = 100; // Max number of frames per second
+    public static final int UPS_CAP = 120; // Max number of updates per second
 
     public static class GameConstants {
         public static final int GAME_SIZE_WIDTH = (int) (640 * GAME_SCALE);
@@ -13,9 +15,10 @@ public class Constants {
         public static final float TILE_SIZE = 30 * GAME_SCALE;
         public static final int PIECE_TILE_SIZE = (int) (TILE_SIZE - 1);
         public static final int NUM_COLS = 10;
-        public static final int NUM_ROWS = 20;
+        public static final int NUM_ROWS = 24;
+        public static final int NUM_VISIBLE_ROWS = 20;
         public static final int BOARD_WIDTH = (int) (NUM_COLS * TILE_SIZE);
-        public static final int BOARD_HEIGHT = (int) (NUM_ROWS * TILE_SIZE);
+        public static final int BOARD_HEIGHT = (int) (NUM_VISIBLE_ROWS * TILE_SIZE);
         public static final int BOARD_OFFSET_FROM_BORDER_X = (int) (15 * GAME_SCALE);
         public static final int BOARD_OFFSET_FROM_BORDER_Y = (int) (20 * GAME_SCALE);
     }

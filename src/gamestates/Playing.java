@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 
 import static util.Constants.GameConstants.*;
 import static util.Constants.BoardConstants.*;
-import static util.Constants.GAME_SCALE;
+import static util.Constants.*;
 
 public class Playing implements GamestateMethods {
 
@@ -18,8 +18,9 @@ public class Playing implements GamestateMethods {
     private BufferedImage boardBorder;
     private int borderX, borderY;
 
-    private int fallTick = 0, fallSpeed = 120;
-    private int lockTick = 0, lockDelay = 60, extLockTick = 0, extLockDelay = 180;
+    private int fallTick = 0, fallSpeed = UPS_CAP;
+    private int lockTick = 0, lockDelay = UPS_CAP / 2;
+    private int extLockTick = 0, extLockDelay = (int) (UPS_CAP * 0.5);
     private boolean gameOver = false;
 
     private final Board board;
@@ -39,8 +40,10 @@ public class Playing implements GamestateMethods {
     }
 
     public void update() {
-        board.update();
-        fallPiece();
+        if (!gameOver) {
+            fallPiece();
+            piece.update();
+        }
     }
 
     // Pushes the piece down over time and locks it if it cannot be lowered for some time.
@@ -65,11 +68,12 @@ public class Playing implements GamestateMethods {
 
     // Places/locks the current piece to the lowest possible position
     private void placePiece() {
-        piece.lock();
-        piece = new Piece(board, this, 1);
         fallTick = 0;
         lockTick = 0;
         extLockTick = 0;
+        piece.lock();
+        board.clearRows();
+        piece = new Piece(board, this, 1);
         if (!piece.isValidSpawn()) {
             setGameOver();
         }
@@ -80,23 +84,31 @@ public class Playing implements GamestateMethods {
         g.drawImage(boardBorder, borderX, borderY, boardBorder.getWidth(), boardBorder.getHeight(), null);
         board.draw(g);
         piece.draw(g);
+
         //g.setColor(Color.lightGray);
         //g.fillRect(fieldBounds.x, fieldBounds.y, fieldBounds.width, fieldBounds.height);
     }
 
     public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_ESCAPE -> Gamestates.gamestate = Gamestates.MENU;
-            case KeyEvent.VK_RIGHT -> piece.moveRight();
-            case KeyEvent.VK_LEFT -> piece.moveLeft();
-            case KeyEvent.VK_DOWN -> piece.moveDown();
-            case KeyEvent.VK_UP -> piece.rotateLeft();
-            case KeyEvent.VK_Z -> piece.rotateRight();
-            case KeyEvent.VK_SPACE -> placePiece();
+        if (!gameOver) {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_ESCAPE -> Gamestates.gamestate = Gamestates.MENU;
+                case KeyEvent.VK_RIGHT -> piece.setRight(true);
+                case KeyEvent.VK_LEFT -> piece.setLeft(true);
+                case KeyEvent.VK_DOWN -> piece.moveDown();
+                case KeyEvent.VK_UP -> piece.rotateLeft();
+                case KeyEvent.VK_Z -> piece.rotateRight();
+                case KeyEvent.VK_SPACE -> placePiece();
+            }
         }
     }
 
     public void keyReleased(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE -> Gamestates.gamestate = Gamestates.MENU;
+            case KeyEvent.VK_RIGHT -> piece.setRight(false);
+            case KeyEvent.VK_LEFT -> piece.setLeft(false);
+        }
     }
 
     public void resetLockDelayTick() {
@@ -104,6 +116,7 @@ public class Playing implements GamestateMethods {
     }
 
     public void setGameOver() {
+        this.gameOver = true;
         System.out.println("Game Over!");
     }
 

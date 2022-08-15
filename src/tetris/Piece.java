@@ -11,12 +11,14 @@ public class Piece {
 
     private Board board;
     private Playing playing;
-    private Point pos = new Point(3, 3);
+    private Point pos = new Point(3, 7);
     private int[][][] formations;
-    private int[][] piece = new int[4][2];
-    private int[][] ghostPiece = new int[4][2];
-    private int curRotation = 0;
-    private int pieceType;
+    private int[][] piece = new int[4][2], ghostPiece = new int[4][2];
+    private int curRotation = 0, pieceType = 0;
+    private boolean left, right, down;
+    private boolean isHoldingLeft, isHoldingRight;
+    private int holdingDirection = 10; // Determines if a control is being held down
+    private int moveTick = 0, moveSpeed = 5; // The speed that the player can move the piece
 
     public Piece(Board board, Playing playing, int pieceType) {
         this.board = board;
@@ -24,6 +26,35 @@ public class Piece {
         this.pieceType = pieceType;
         formations = GetFormations(pieceType);
         updatePieces();
+    }
+
+    public void update() {
+        int dX = 0;
+
+        if (left) {
+            dX--;
+        }
+
+        if (right) {
+            dX++;
+        }
+
+        move(pos.x + dX, pos.y);
+    }
+
+    public void draw(Graphics g) {
+        drawGhost(g);
+        drawPlayingPiece(g);
+    }
+
+    private void drawGhost(Graphics g) {
+        for (int[] p : ghostPiece) {
+            int xTile = (int) (board.getX() + (p[0] * TILE_SIZE) + 1);
+            int yTile = (int) (board.getY() + (p[1] * TILE_SIZE) + 1);
+
+            g.setColor(new Color(100, 100, 100));
+            g.fillRect(xTile, yTile, PIECE_TILE_SIZE, PIECE_TILE_SIZE);
+        }
     }
 
     // Updates both the playing and ghost piece
@@ -74,13 +105,6 @@ public class Piece {
             }
         }
         return false;
-    }
-
-    // Locks the piece onto the board and creates a new one
-    public void lock() {
-        for (int[] p : ghostPiece) {
-            board.getBoardContents()[p[1]][p[0]] = pieceType;
-        }
     }
 
     // Rotates the playing piece by dir. -1 for CCW and 1 for CW.
@@ -154,7 +178,7 @@ public class Piece {
             updatePieces();
             playing.resetLockDelayTick();
         } else {
-            System.out.println("ERROR: Cannot move piece to " + x + ", " + y);
+            System.out.println("RESTICTION: Cannot move piece to " + x + ", " + y);
         }
     }
 
@@ -188,21 +212,6 @@ public class Piece {
         }
     }
 
-    private void drawGhost(Graphics g) {
-        for (int[] p : ghostPiece) {
-            int xTile = (int) (board.getX() + (p[0] * TILE_SIZE) + 1);
-            int yTile = (int) (board.getY() + (p[1] * TILE_SIZE) + 1);
-
-            g.setColor(new Color(100, 100, 100));
-            g.fillRect(xTile, yTile, PIECE_TILE_SIZE, PIECE_TILE_SIZE);
-        }
-    }
-
-    public void draw(Graphics g) {
-        drawGhost(g);
-        drawPlayingPiece(g);
-    }
-
     // Returns whether the piece can move down by a tile
     public boolean canMoveDown() {
         return canMoveHere(piece, pos.x, pos.y + 1);
@@ -213,4 +222,23 @@ public class Piece {
         return canMoveHere(piece, pos.x, pos.y);
     }
 
+    // Locks the piece onto the board and creates a new one
+    public void lock() {
+        for (int[] p : ghostPiece) {
+            board.getBoardContents()[p[1]][p[0]] = pieceType;
+        }
+    }
+
+
+    public void setLeft(boolean left) {
+        this.left = left;
+    }
+
+    public void setRight(boolean right) {
+        this.right = right;
+    }
+
+    public void setDown(boolean down) {
+        this.down = down;
+    }
 }
