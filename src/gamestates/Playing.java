@@ -2,6 +2,7 @@ package gamestates;
 
 import tetris.Board;
 import tetris.Piece;
+import tetris.PieceController;
 import util.ImageLoader;
 
 import java.awt.*;
@@ -18,20 +19,17 @@ public class Playing implements GamestateMethods {
     private BufferedImage boardBorder;
     private int borderX, borderY;
 
-    private int fallTick = 0, fallSpeed = UPS_CAP;
-    private int lockTick = 0, lockDelay = UPS_CAP / 2;
-    private int extLockTick = 0, extLockDelay = (int) (UPS_CAP * 0.5);
-    private boolean left, right, down;
-    private int leftTick = 0, rightTick = 0, downTick = 0, delaySpeed = 30;
     private boolean gameOver = false;
 
     private final Board board;
     private Piece piece;
+    private PieceController pieceController;
 
     public Playing() {
         loadBoardBorder();
         board = new Board(borderX + BOARD_OFFSET_FROM_BORDER_X, borderY + BOARD_OFFSET_FROM_BORDER_Y);
-        piece = new Piece(board, this, 1);
+        piece = new Piece(board, 1);
+        pieceController = new PieceController(this, board, piece);
     }
 
     // Loads the border image for the board
@@ -43,87 +41,7 @@ public class Playing implements GamestateMethods {
 
     public void update() {
         if (!gameOver) {
-            fallPiece();
-            controller();
-        }
-    }
-
-    private void controller() {
-        if (!(left && right)) {
-            leftController();
-            rightController();
-        }
-
-        if (down) {
-            if (downTick >= 10) {
-                downTick = 0;
-                piece.moveDown();
-                fallTick = 0;
-            }
-            downTick++;
-        } else {
-            downTick = 10;
-        }
-    }
-
-    private void leftController() {
-        if (left) {
-            if (leftTick == 0) {
-                piece.move(piece.getX() - 1, piece.getY());
-            } else if (leftTick >= delaySpeed) {
-                piece.move(piece.getX() - 1, piece.getY());
-                leftTick -= 5;
-            }
-            leftTick++;
-        } else {
-            leftTick = 0;
-        }
-    }
-
-    private void rightController() {
-        if (right) {
-            if (rightTick == 0) {
-                piece.move(piece.getX() + 1, piece.getY());
-            } else if (rightTick >= delaySpeed) {
-                piece.move(piece.getX() + 1, piece.getY());
-                rightTick -= 5;
-            }
-            rightTick++;
-        } else {
-            rightTick = 0;
-        }
-    }
-
-    // Pushes the piece down over time and locks it if it cannot be lowered for some time.
-    private void fallPiece() {
-        if (piece.canMoveDown()) {
-            fallTick++;
-
-            if (fallTick >= fallSpeed) {
-                fallTick = 0;
-                piece.moveDown();
-            }
-        } else {
-            lockTick++;
-            extLockTick++;
-            fallTick = 0;
-
-            if (lockTick >= lockDelay || extLockTick >= extLockDelay) {
-                placePiece();
-            }
-        }
-    }
-
-    // Places/locks the current piece to the lowest possible position
-    private void placePiece() {
-        fallTick = 0;
-        lockTick = 0;
-        extLockTick = 0;
-        piece.lock();
-        board.clearRows();
-        piece.newPiece(1);
-        if (!piece.isValidSpawn()) {
-            setGameOver();
+            pieceController.update();
         }
     }
 
@@ -138,12 +56,12 @@ public class Playing implements GamestateMethods {
         if (!gameOver) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_ESCAPE -> Gamestates.gamestate = Gamestates.MENU;
-                case KeyEvent.VK_RIGHT -> right = true;
-                case KeyEvent.VK_LEFT -> left = true;
-                case KeyEvent.VK_DOWN -> down = true;
-                case KeyEvent.VK_UP -> piece.rotateLeft();
-                case KeyEvent.VK_Z -> piece.rotateRight();
-                case KeyEvent.VK_SPACE -> placePiece();
+                case KeyEvent.VK_RIGHT -> pieceController.setRight(true);
+                case KeyEvent.VK_LEFT -> pieceController.setLeft(true);
+                case KeyEvent.VK_DOWN -> pieceController.setDown(true);
+                case KeyEvent.VK_UP -> pieceController.rotate(1);
+                case KeyEvent.VK_Z -> pieceController.rotate(-1);
+                case KeyEvent.VK_SPACE -> pieceController.placePiece();
             }
         }
     }
@@ -151,14 +69,10 @@ public class Playing implements GamestateMethods {
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_ESCAPE -> Gamestates.gamestate = Gamestates.MENU;
-            case KeyEvent.VK_RIGHT -> right = false;
-            case KeyEvent.VK_LEFT -> left = false;
-            case KeyEvent.VK_DOWN -> down = false;
+            case KeyEvent.VK_RIGHT -> pieceController.setRight(false);
+            case KeyEvent.VK_LEFT -> pieceController.setLeft(false);
+            case KeyEvent.VK_DOWN -> pieceController.setDown(false);
         }
-    }
-
-    public void resetLockDelayTick() {
-        lockTick = 0;
     }
 
     public void setGameOver() {

@@ -1,7 +1,5 @@
 package tetris;
 
-import gamestates.Playing;
-
 import java.awt.*;
 
 import static util.Constants.BoardConstants.*;
@@ -10,15 +8,13 @@ import static util.Constants.TetrominoConstants.*;
 public class Piece {
 
     private Board board;
-    private Playing playing;
     private Point pos = new Point(3, 7);
     private int[][][] formations, wallKickData;
     private int[][] piece = new int[4][2], ghostPiece = new int[4][2];
-    private int curRotation = 0, pieceType = 0;
+    private int pieceType, curRotation = 0;
 
-    public Piece(Board board, Playing playing, int pieceType) {
+    public Piece(Board board, int pieceType) {
         this.board = board;
-        this.playing = playing;
         this.pieceType = pieceType;
         formations = GetFormations(pieceType);
         wallKickData = GetWallKickData(pieceType);
@@ -71,7 +67,7 @@ public class Piece {
         int dX = x - pos.x;
         int dY = y - pos.y;
         for (int[] p : piece) {
-            if (!canMovePieceHere(p[0] + dX, p[1] + dY)) {
+            if (!isAvailableTile(p[0] + dX, p[1] + dY)) {
                 return false;
             }
         }
@@ -79,7 +75,7 @@ public class Piece {
     }
 
     // Returns if a tile of a piece can be moved to x, y
-    private boolean canMovePieceHere(int x, int y) {
+    private boolean isAvailableTile(int x, int y) {
         if (x >= 0 && x < NUM_COLS && y < NUM_ROWS) {
             if (y >= 0) {
                 return board.getBoardContents()[y][x] == 0;
@@ -91,7 +87,7 @@ public class Piece {
     }
 
     // Rotates the playing piece by dir. -1 for CCW and 1 for CW.
-    private void rotate(int dir) {
+    public boolean rotate(int dir) {
         int newRotation = curRotation + dir;
 
         if (newRotation == 4) {
@@ -106,18 +102,9 @@ public class Piece {
             pos.y = rotationCheck.y;
             curRotation = newRotation;
             updatePieces();
-            playing.resetLockDelayTick();
+            return true;
         }
-    }
-
-    // Rotates the playing piece clockwise.
-    public void rotateRight() {
-        rotate(1);
-    }
-
-    // Rotates the playing piece counter-clockwise.
-    public void rotateLeft() {
-        rotate(-1);
+        return false;
     }
 
     /* Checks if the provided rotation is possible by using the wall-kick data.
@@ -153,20 +140,16 @@ public class Piece {
     }
 
     // Moves the piece to x and y, if possible
-    public void move(int x, int y) {
+    public boolean move(int x, int y) {
         if (canMoveHere(this.piece, x, y)) {
             pos.x = x;
             pos.y = y;
             updatePieces();
-            playing.resetLockDelayTick();
+            return true;
         } else {
             System.out.println("RESTICTION: Cannot move piece to " + x + ", " + y);
+            return false;
         }
-    }
-
-    // Moves the piece down by 1
-    public void moveDown() {
-        move(pos.x, pos.y + 1);
     }
 
     private void drawPlayingPiece(Graphics g) {
