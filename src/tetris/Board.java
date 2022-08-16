@@ -66,14 +66,12 @@ public class Board {
     }
 
     public void drawBoardContents(Graphics g) {
-        for (int i = 0; i < boardContents.length; i++) {
+        for (int i = 4; i < boardContents.length; i++) {
             for (int j = 0; j < boardContents[i].length; j++) {
-                if (boardContents[i][j] == I_PIECE) {
-                    g.setColor(new Color(66, 188, 245));
-                    int x1 = (int) (x + j * TILE_SIZE) + 1;
-                    int y1 = (int) (y + i * TILE_SIZE) + 1;
-                    g.fillRect(x1, y1, (int) TILE_SIZE - 1, (int) TILE_SIZE - 1);
-                }
+                g.setColor(GetPieceColor(boardContents[i][j]));
+                int x1 = (int) (x + j * TILE_SIZE) + 1;
+                int y1 = (int) (y + i * TILE_SIZE) + 1;
+                g.fillRect(x1, y1, (int) TILE_SIZE - 1, (int) TILE_SIZE - 1);
             }
         }
     }

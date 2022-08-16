@@ -62,6 +62,7 @@ public class Playing implements GamestateMethods {
                 case KeyEvent.VK_UP -> pieceController.rotate(1);
                 case KeyEvent.VK_Z -> pieceController.rotate(-1);
                 case KeyEvent.VK_SPACE -> pieceController.placePiece();
+                case KeyEvent.VK_SHIFT -> pieceController.holdPiece();
             }
         }
     }

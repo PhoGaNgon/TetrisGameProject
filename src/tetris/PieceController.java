@@ -2,6 +2,8 @@ package tetris;
 
 import gamestates.Playing;
 
+import java.util.*;
+
 import static util.Constants.UPS_CAP;
 
 public class PieceController {
@@ -9,17 +11,34 @@ public class PieceController {
     private Playing playing;
     private Piece piece;
     private Board board;
+    private List<Integer> bag;
+    private ArrayList<Integer> pieceQueue = new ArrayList<>();
+    private int heldPiece;
 
     private int fallTick = 0, fallSpeed = UPS_CAP;
     private int lockTick = 0, lockDelay = UPS_CAP / 2;
     private int extLockTick = 0, extLockDelay = (int) (UPS_CAP * 1.5);
     private boolean left = false, right = false, down = false;
-    private int leftTick = 0, rightTick = 0, downTick = 0, delaySpeed = 30;
+    private int leftTick = 0, rightTick = 0, downTick = 0, delaySpeed = 30, softDropSpeed = 5;
+    private boolean heldThisTurn = false;
 
     public PieceController(Playing playing, Board board, Piece piece) {
         this.playing = playing;
         this.board = board;
         this.piece = piece;
+        initQueue();
+        getNextPiece();
+    }
+
+    private void initQueue() {
+        bag = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
+        shuffleBag();
+        shuffleBag();
+    }
+
+    private void shuffleBag() {
+        Collections.shuffle(bag);
+        pieceQueue.addAll(bag);
     }
 
     public void update() {
@@ -31,7 +50,7 @@ public class PieceController {
         }
 
         if (down) {
-            if (downTick >= 10) {
+            if (downTick >= softDropSpeed) {
                 downTick = 0;
                 move(0, 1);
                 fallTick = 0;
@@ -105,9 +124,20 @@ public class PieceController {
         extLockTick = 0;
         piece.lock();
         board.clearRows();
-        piece.newPiece(1);
+        getNextPiece();
+        heldThisTurn = false;
+        System.out.println(pieceQueue);
         if (!piece.isValidSpawn()) {
             playing.setGameOver();
+        }
+    }
+
+    private void getNextPiece() {
+        piece.newPiece(pieceQueue.get(0));
+        pieceQueue.remove(0);
+
+        if (pieceQueue.size() <= 7) {
+            shuffleBag();
         }
     }
 
@@ -130,6 +160,20 @@ public class PieceController {
 
         if (successfulRotate) {
             lockTick = 0;
+        }
+    }
+
+    public void holdPiece() {
+        if (!heldThisTurn) {
+            heldThisTurn = true;
+            int oldPieceType = piece.getPieceType();
+            if (heldPiece != 0) {
+                piece.newPiece(heldPiece);
+                heldPiece = oldPieceType;
+            } else {
+                heldPiece = piece.getPieceType();
+                getNextPiece();
+            }
         }
     }
 }

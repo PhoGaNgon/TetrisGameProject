@@ -12,6 +12,7 @@ public class Piece {
     private int[][][] formations, wallKickData;
     private int[][] piece = new int[4][2], ghostPiece = new int[4][2];
     private int pieceType, curRotation = 0;
+    private Color pieceColor;
 
     public Piece(Board board, int pieceType) {
         this.board = board;
@@ -157,7 +158,7 @@ public class Piece {
             int xTile = (int) (board.getX() + (p[0] * TILE_SIZE) + 1);
             int yTile = (int) (board.getY() + (p[1] * TILE_SIZE) + 1);
 
-            g.setColor(new Color(66, 188, 245));
+            g.setColor(pieceColor);
             g.fillRect(xTile, yTile, PIECE_TILE_SIZE, PIECE_TILE_SIZE);
         }
     }
@@ -184,6 +185,7 @@ public class Piece {
         pos = new Point(3, 7);
         formations = GetFormations(pieceType);
         wallKickData = GetWallKickData(pieceType);
+        pieceColor = GetPieceColor(pieceType);
         curRotation = 0;
         updatePieces();
     }
@@ -194,5 +196,9 @@ public class Piece {
 
     public int getY() {
         return pos.y;
+    }
+
+    public int getPieceType() {
+        return pieceType;
     }
 }

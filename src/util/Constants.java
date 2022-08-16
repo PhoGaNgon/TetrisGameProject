@@ -1,5 +1,7 @@
 package util;
 
+import java.awt.*;
+
 public class Constants {
 
     public static final float GAME_SCALE = 1f; // Scale of game
@@ -31,6 +33,28 @@ public class Constants {
         public static final int S_PIECE = 5;
         public static final int T_PIECE = 6;
         public static final int Z_PIECE = 7;
+
+        // Returns the color of each piece type
+        public static Color GetPieceColor(int pieceType) {
+            switch (pieceType) {
+                case I_PIECE:
+                    return new Color(66, 188, 245);
+                case J_PIECE:
+                    return new Color(66, 96, 245);
+                case L_PIECE:
+                    return new Color(245, 155, 66);
+                case O_PIECE:
+                    return new Color(245, 224, 66);
+                case S_PIECE:
+                    return new Color(49, 214, 52);
+                case T_PIECE:
+                    return new Color(112, 49, 214);
+                case Z_PIECE:
+                    return new Color(214, 49, 49);
+                default:
+                    return Color.BLACK;
+            }
+        }
 
         /* Contains the formations for all tetrimino pieces and their rotations
             Based on Tetris SRS rotations.
