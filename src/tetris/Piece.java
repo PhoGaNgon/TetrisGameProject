@@ -12,34 +12,17 @@ public class Piece {
     private Board board;
     private Playing playing;
     private Point pos = new Point(3, 7);
-    private int[][][] formations;
+    private int[][][] formations, wallKickData;
     private int[][] piece = new int[4][2], ghostPiece = new int[4][2];
     private int curRotation = 0, pieceType = 0;
-    private boolean left, right, down;
-    private boolean isHoldingLeft, isHoldingRight;
-    private int holdingDirection = 10; // Determines if a control is being held down
-    private int moveTick = 0, moveSpeed = 5; // The speed that the player can move the piece
 
     public Piece(Board board, Playing playing, int pieceType) {
         this.board = board;
         this.playing = playing;
         this.pieceType = pieceType;
         formations = GetFormations(pieceType);
+        wallKickData = GetWallKickData(pieceType);
         updatePieces();
-    }
-
-    public void update() {
-        int dX = 0;
-
-        if (left) {
-            dX--;
-        }
-
-        if (right) {
-            dX++;
-        }
-
-        move(pos.x + dX, pos.y);
     }
 
     public void draw(Graphics g) {
@@ -141,7 +124,6 @@ public class Piece {
         Returns the first possible Point that allows the rotation to be valid.
      */
     protected Point checkValidRotation(int newRotation, int dir) {
-        int[][][] wallKickData = GetWallKickData(pieceType);
         int[][] rotatedPiece = new int[4][2];
 
         updatePiece(rotatedPiece, pos, newRotation);
@@ -171,7 +153,7 @@ public class Piece {
     }
 
     // Moves the piece to x and y, if possible
-    private void move(int x, int y) {
+    public void move(int x, int y) {
         if (canMoveHere(this.piece, x, y)) {
             pos.x = x;
             pos.y = y;
@@ -182,24 +164,9 @@ public class Piece {
         }
     }
 
-    // Moves the piece left by 1
-    public void moveLeft() {
-        move(pos.x - 1, pos.y);
-    }
-
-    // Moves the piece right by 1
-    public void moveRight() {
-        move(pos.x + 1, pos.y);
-    }
-
     // Moves the piece down by 1
     public void moveDown() {
         move(pos.x, pos.y + 1);
-    }
-
-    // Moves the piece up by 1
-    public void moveUp() {
-        move(pos.x, pos.y - 1);
     }
 
     private void drawPlayingPiece(Graphics g) {
@@ -217,7 +184,7 @@ public class Piece {
         return canMoveHere(piece, pos.x, pos.y + 1);
     }
 
-    // Returns if the spawn spot for the piece is avaible, signaling that the game is still on-going
+    // Returns if the spawn spot for the piece is avaible, signaling that the game is still ongoing
     public boolean isValidSpawn() {
         return canMoveHere(piece, pos.x, pos.y);
     }
@@ -229,16 +196,20 @@ public class Piece {
         }
     }
 
-
-    public void setLeft(boolean left) {
-        this.left = left;
+    public void newPiece(int pieceType) {
+        this.pieceType = pieceType;
+        pos = new Point(3, 7);
+        formations = GetFormations(pieceType);
+        wallKickData = GetWallKickData(pieceType);
+        curRotation = 0;
+        updatePieces();
     }
 
-    public void setRight(boolean right) {
-        this.right = right;
+    public int getX() {
+        return pos.x;
     }
 
-    public void setDown(boolean down) {
-        this.down = down;
+    public int getY() {
+        return pos.y;
     }
 }
