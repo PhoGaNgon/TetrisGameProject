@@ -10,10 +10,17 @@ public class HelpMethods {
     public static void DrawMiniTetrimino(Graphics g, int x, int y, int pieceType) {
         if (pieceType != 0) {
             int[][][] formations = GetFormations(pieceType);
+            int minoSize = (int) (7 * GAME_SCALE);
             g.setColor(GetPieceColor(pieceType));
 
+            if (pieceType == I_PIECE) {
+                x -= minoSize / 2;
+                y += minoSize / 2;
+            } else if (pieceType == O_PIECE) {
+                x -= minoSize / 2;
+            }
+
             for (int minoIndex = 0; minoIndex < 4; minoIndex++) {
-                int minoSize = (int) (7 * GAME_SCALE);
                 int xTile = formations[0][minoIndex][0] * minoSize + x;
                 int yTile = formations[0][minoIndex][1] * minoSize + y;
                 g.fillRect(xTile, yTile, minoSize - 1, minoSize - 1);

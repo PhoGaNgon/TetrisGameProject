@@ -20,7 +20,7 @@ public class NextPiecesContainer {
     public NextPiecesContainer(int x, int y, ArrayList<Integer> pieceQueue) {
         this.x = x - (NEXT_PIECES_CONTAINER_WIDTH / 2);
         this.y = y;
-        offsetX = (int) (this.x + 13 * GAME_SCALE);
+        offsetX = (int) (this.x + 15 * GAME_SCALE);
         offsetY = (int) (this.y + 40 * GAME_SCALE);
         this.pieceQueue = pieceQueue;
         container = ImageLoader.GetImage(ImageLoader.NEXT_PIECES_CONTAINER);
