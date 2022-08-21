@@ -28,8 +28,8 @@ public class Menu implements GamestateMethods {
     }
 
     private void createButtons() {
-        startButton = new MenuButton(GAME_SIZE_WIDTH / 2, (int) (220 * GAME_SCALE), 0, Gamestates.PLAYING);
-        quitButton = new MenuButton(GAME_SIZE_WIDTH / 2, (int) (350 * GAME_SCALE), 1, Gamestates.QUIT);
+        startButton = new MenuButton(GAME_SIZE_WIDTH / 2, (int) (88 * GAME_SCALE), 0, Gamestates.PLAYING);
+        quitButton = new MenuButton(GAME_SIZE_WIDTH / 2, (int) (140 * GAME_SCALE), 1, Gamestates.QUIT);
     }
 
     private void loadBackground() {
@@ -45,7 +45,7 @@ public class Menu implements GamestateMethods {
 
     public void draw(Graphics g) {
         g.fillRect(0, 0, GAME_SIZE_WIDTH, GAME_SIZE_HEIGHT);
-        g.drawImage(menuBackground, GAME_SIZE_WIDTH / 2 - (backgroundWidth / 2), (int) (30 * GAME_SCALE), backgroundWidth, backgroundHeight, null);
+        g.drawImage(menuBackground, GAME_SIZE_WIDTH / 2 - (backgroundWidth / 2), (int) (12 * GAME_SCALE), backgroundWidth, backgroundHeight, null);
 
         startButton.draw(g);
         quitButton.draw(g);

@@ -9,8 +9,10 @@ public class ImageLoader {
 
     public static final String MENU_BACKGROUND = "menu_background.png";
     public static final String MENU_BUTTON = "menu_button.png";
-    public static final String PLAYING_FIELD_OUTLINE = "playing_field_outline.png";
+    public static final String BOARD_BORDER = "board_border.png";
     public static final String PLAYING_BACKGROUND = "playing_background.png";
+    public static final String NEXT_PIECES_CONTAINER = "next_pieces_paper.png";
+    public static final String HOLD_PIECE_CONTAINER = "hold_piece_container.png";
 
     public static BufferedImage GetImage(String fileName) {
         BufferedImage img = null;

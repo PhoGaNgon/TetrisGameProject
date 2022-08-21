@@ -176,4 +176,14 @@ public class PieceController {
             }
         }
     }
+
+    // Returns the queue of next pieces
+    public ArrayList<Integer> getPieceQueue() {
+        return pieceQueue;
+    }
+
+    // Returns the pieceType of the currently held piece
+    public int getHeldPiece() {
+        return heldPiece;
+    }
 }
